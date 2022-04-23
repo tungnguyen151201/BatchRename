@@ -1,0 +1,164 @@
+﻿<Window x:Class="BatchRename.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BatchRename"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="1024"
+        Loaded="Window_Loaded">
+    <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Vertical" Margin="5,5,5,5">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button x:Name="addRule" Height="25" Background="White" BorderThickness="0" Margin="0,0,5,0" Click="addRule_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Images/add.png" Margin="0,0,5,0"></Image>
+                        <TextBlock Text="Add Rule" VerticalAlignment="Center"></TextBlock>
+                    </StackPanel>
+                </Button>
+                <ComboBox x:Name="rulesComboBox" Width="100" Margin="0,0,10,0" SelectionChanged="ruleComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel>
+                                <TextBlock Text="{Binding Name}"/>
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button x:Name="startBatch" Height="25" Click="startBatch_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Images/start.png" Margin="2,2,5,2"></Image>
+                        <TextBlock Text="Start Batch" VerticalAlignment="Center" Margin="0,0,5,0"></TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button x:Name="savePreset" Height="25" Margin="0,0,5,0" Background="White" Click="savePreset_Click">
+                    <Image Source="Images/save.png"></Image>
+                </Button>
+                <TextBlock VerticalAlignment="Center" Text="Presets: " Margin="0,0,5,0"></TextBlock>
+                <ComboBox x:Name="presetsCombobox" Width="100" Height="25" Margin="0,0,10,0" SelectionChanged="presetsCombobox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button x:Name="clearButton" Height="25" Click="clearButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Images/clear.png" Margin="0,0,5,0"></Image>
+                        <TextBlock Text="Clear" VerticalAlignment="Center" Margin="0,0,5,0"></TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <ListView x:Name="rulesListView" Height="300">
+                <ListView.Resources>
+                    <ContextMenu x:Key="MyContextMenu">
+                        <MenuItem Header="Edit" Click="EditItem_Click"></MenuItem>
+                        <MenuItem Header="Delete" Click="DeleteItem_Click"></MenuItem>
+                    </ContextMenu>
+                </ListView.Resources>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="ContextMenu" Value="{StaticResource MyContextMenu}"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <TextBlock Text="{Binding Name}"></TextBlock>
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Orientation="Horizontal" Margin="5,10,0,0">
+                <TextBlock Text="Apply to: " Margin="0,0,5,0"></TextBlock>
+                <ComboBox Width="200" x:Name="applyComboBox" SelectionChanged="applyComboBox_SelectionChanged">
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TabControl>
+                <TabItem Header="Rename File">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                            <Button Name="btnAddFile" HorizontalAlignment="Left" Click="btnAddFile_Click" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Image Source="Images/Add-Folder-icon.png" Width="20" Height="20" Margin="0,0,5,0"></Image>
+                                    <TextBlock Text="Add" VerticalAlignment="Center" Margin="0,0,5,0"></TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="btnRemoveFile" HorizontalAlignment="Left" Click="btnRemoveFile_Click" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Image Source="Images/delete.png" Width="20" Height="20" Margin="0,0,5,0"></Image>
+                                    <TextBlock Text="Remove" VerticalAlignment="Center" Margin="0,0,5,0"></TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="btnRemoveAll" HorizontalAlignment="Left" Click="btnRemoveAll_Click" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Image Source="Images/removeall.png" Width="20" Height="20" Margin="0,0,5,0"></Image>
+                                    <TextBlock Text="Remove All" VerticalAlignment="Center" Margin="0,0,5,0"></TextBlock>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <Grid Height="305" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110*"/>
+                                <ColumnDefinition Width="251*"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid Name="FilesGrid" AutoGenerateColumns="False" GridLinesVisibility="All"
+                                AllowDrop="True" Drop="FilesGrid_Drop"
+                                CanUserResizeColumns="True" IsReadOnly="True" CanUserResizeRows="False" Grid.ColumnSpan="2">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Width="200" Binding="{Binding FileName}" Header="FileName">
+                                        <DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="BorderBrush" Value="Black"/>
+                                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="200" Binding="{Binding NewFileName}" Header="New FileName">
+                                        <DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="BorderBrush" Value="Black"/>
+                                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="250" Binding="{Binding Path}" Header="Path">
+                                        <DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="BorderBrush" Value="Black"/>
+                                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.HeaderStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="70" Binding="{Binding Error}" Header="Error">
+                                        <DataGridTextColumn.HeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="BorderBrush" Value="Black"/>
+                                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.HeaderStyle>
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Rename Folder">
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+    </StackPanel>
+</Window>
