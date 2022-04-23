@@ -45,7 +45,7 @@ namespace BatchRename
                 }
             }
 
-            var presetFiles = new DirectoryInfo(folder + "/Preset").GetFiles("*.txt");
+            //var presetFiles = new DirectoryInfo(folder + "/Preset").GetFiles("*.txt");
             foreach (var file in presetFiles)
             {
                 presets.Add(new Preset { Name = file.Name , Path = file.FullName});                
